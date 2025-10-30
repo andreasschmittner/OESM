@@ -1,0 +1,140 @@
+#-----------------------------------------------------
+# Makefile for compiling and linking sheet-shelf model
+#-----------------------------------------------------
+
+ DEBUG = 0
+#DEBUG = 1
+
+SHELL = /bin/sh
+.SUFFIXES: .F .o
+#.SILENT:
+NULL = 
+
+#-----------------------------------------------------------------------
+
+# for ifort:
+NI = ./Netcdf/Ifort
+NA = ./Netcdf/Ifort
+
+# for gfortran:
+#NI = ../Netcdf/Gfortran
+#NA = ../Netcdf/Gfortran
+
+#DI = ../Code_062620
+#DI = ../Code_rd2021
+DI = ./Code_em021623
+
+#-----------------------------------------------------------------------
+
+this_makefile := $(lastword $(MAKEFILE_LIST))
+INCICE = *.h $(DI)/*.h $(this_makefile)
+VPATH  = .:$(DI)
+IPATH  = -I. -I$(DI) -I$(NI)
+
+#=========
+
+DFLAGS = -DSTEREO \
+         -DEISANTA -DBEDMACHINE \
+         -DRESOL20 \
+         -DLOVECLIP -DLOVEANOM -DRACANTOBS -DATMOSDTRACMO=2.4 \
+         -DENHANCESHEET=0.5 \
+         -DENHANCESHELF=0.7 \
+         -DOCFACMULT=1.0 \
+         -DBEDROCK -DIFLITH \
+         -DNETCDF \
+         -DSCHOOFGL \
+         -DOCMARTIN \
+         -DFACEMELT \
+         -DCALVING \
+         -DCRHMELREAD \
+         -DIFREST=0 \
+                   \
+         -DNYEARSTART=0 \
+         -DNYEAREND=1 \
+         -DNYEARRES=10000 \
+         -DNYEARHIS=500 \
+         -DNYEAROUT2D=500 \
+         -DTLAPSEPRECIP=0 \
+         -DNYEARTAB=1 \
+         -DNYEARTABBUD=1 \
+         -DNYEAROUT1D=0 \
+         -DADAPTDT
+
+#        -DPARAMCLIM -DRACANTCLIM -DATMOSDTRACMO=2.4 \
+
+#        -DLOVECLIP  \
+
+#        -DLOVECLIP -DLOVEANOM -DRACANTOBS -DATMOSDTRACMO=2.4 \
+
+#        -DNOMOVECOAST \
+#        -DSHELFINV \
+
+#        -DNYEARSTART=0 \
+#        -DNYEAREND=10000 \
+#        -DNYEARRES=10000 \
+#        -DNYEARHIS=500 \
+#        -DNYEAROUT2D=500 \
+
+#        -DPARAMCLIM -DSEARISECLIM \
+#        -DLOVECLIP -DLOVEANOM \
+
+#=========
+
+DFLAGSPA = -DDOSPARSE -DNUMREC
+
+#-----------------------------------------------------------------------
+
+ifeq ($(DEBUG),1)
+  DEBUGC = -g -C -traceback
+ #DEBUGL = -g
+else
+  DEBUGC = -O3
+  DEBUGL = -O3
+endif
+
+ DFLAGS2 = 
+
+# for ifort:
+ FF  = ifort
+ LL = ifort
+ COMPFLAGS = -r8 -fpe1 -diag-disable 8290 -diag-disable 7713
+ LOADFLAGS = -r8 -fpe1
+
+# for gfortran:
+#FF = gfortran
+#LL = gfortran
+#COMPFLAGS = -fdefault-real-8
+#LOADFLAGS = -fdefault-real-8
+
+ LOADLIBS  = -L$(NA) -lnetcdf
+ SPALIBS =
+ 
+#-----------------------------------------------------------------------
+
+icode   = $(shell cd $(DI) ; ls *.F)
+icodeo := $(addsuffix .o, $(basename $(icode)))
+
+execname = ais/ais.exe
+
+$execname: $(icodeo)
+	echo ' '
+	echo '** Linking $(execname)'
+	$(LL) $(DEBUGL) -o $(execname) \
+	    $(icodeo) \
+	    $(LOADFLAGS)           \
+	    $(LOADLIBS) $(SPALIBS) 
+
+*.h:
+	touch -a dummy.h
+
+#-----------------------------------------------------------------------
+
+$(icodeo) : %.o:%.F $(INCICE)
+
+.F.o:
+	echo ' '
+	echo '** Compiling $*.F'
+	$(FF) $(COMPFLAGS) $(DFLAGS) $(DFLAGS2) $(DFLAGSPA) $(DEBUGC) \
+	   $(IPATH) -c $<
+
+#-----------------------------------------------------------------------

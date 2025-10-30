@@ -1,0 +1,4 @@
+2025-06-29: copied from oesm_11_template018
+cp -pr oesm_11_t017.3/pypl oesm_11_template019/.
+rm oesm_11_template019/ferret/calc_massbal.jnl redundant with ~/local/ferret/mygo/ice/calc_massbal.jnl
+

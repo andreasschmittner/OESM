@@ -1,0 +1,28 @@
+use pim/ais/output/fort.92.nc
+go calc_massbal 
+use uvic/rivers/rivers.nc
+let/title="Meltwater Discharge"/units="Sv" runliqo = runliq[d=2,x=@din,y=@din]/100*1e-6
+let/title="Iceberg Discharge"/units="Sv" runfrozo = runfrz[d=2,x=@din,y=@din]/100*1e-6
+pl/vlim=0:0.10 runliqo
+pl/o runfrozo
+pl/o runliqavi[d=1]*1e-6,runfrozavi[d=1]*1e-6
+use uvic/tavg.nc
+let urd = f_rivdis[x=@din,y=90s:60s@din]/1000*1e-6
+let uro = f_runoff[x=@din,y=90s:60s@din]/1000*1e-6
+let uro_ice0 = f_runoff*aamsk
+let uro_ice = uro_ice0[x=@din,y=90s:60s@din]/1000*1e-6
+let uro_noice = uro - uro_ice
+pl/o/li=6 urd
+pl/o/color=(100,50,100,70)/dash uro
+!let aamsk = if l_rivers eq 61 then 1
+let aamsk = if (y lt -60) then L_icefra else 0
+let aapme = (f_precip-f_evap)*aamsk
+pl/o/color=(100,50,0,70)/thick aapme[x=@din,y=@din]/1000*1e-6 ! = uro if aams(l_rivers)
+let iceacc_Sv = sfcmb*0.91/spy/fac*1e-6 ! 0.91 converts from m ice to m water
+let ice_mass_bal = iceacc_Sv[d=1] - runliqavi[d=1]*1e-6 - runfrozavi[d=1]*1e-6 ! 0.07955 - 0.04871 - 0.03357
+pl/o/color=(0,0,100,70)/dash/d=1 iceacc_Sv
+stop
+set win/new
+use 1
+pl runliq0*area/spy*1e-6
+pl/o runliqavi*1e-6

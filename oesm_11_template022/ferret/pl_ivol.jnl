@@ -1,0 +1,6 @@
+use pim/ais/output/fort.92.nc
+go ferret/calc_massbal
+pl/vlim=25:28/title="Ice Volume test5" vol[d=1]
+! obs estimates SeaRise 2.55e16 m^3 
+pl/d=1/o/li=1/dash/title="Obs" vol*0+25.5
+

@@ -1,0 +1,74 @@
+use pim/ais/output/fort.92.nc
+go calc_massbal
+go multi_view 2, 2, 0.34, 0.12, 0.025, 0.34, 0.12, 0.03
+PPL AXLSZE 0.18,0.18
+ppl labset, 0.18, 0.18, 0.18
+
+set view v11; ppl axlabp 1,-1
+pl/thick/set/nol/vlim=-0.02:0.1 totmb
+ppl ylab "Total Mass Balance (m/yr)"
+ppl yfor (f5.2)
+ppl plot
+pl/o/nol evap
+pl/o/nol perc-bfrml 
+pl/o/nol fmelt
+label 2000, 0.05,,,0.15 "@C002evaporation" 
+label 2000, 0.065,,,0.15 "@C003runoff from grounded base" 
+label 2000, 0.08,,,0.15 "@C004facemelt" 
+
+set view v12; ppl axlabp 1,1
+pl/thick/set/nol/vlim=0.14:0.26 totacc
+ppl ylab "Surface Accumulation (m/yr)"
+ppl yfor (f4.2)
+ppl plot
+!
+! obs accumulation estimates
+! Palerme et al. (2014, https://doi.org/10.5194/tc-8-1577-2014) only for north of 82S (2005-2011)
+! I get the same value (0.17) from Searise data (Arthern et al. (2006) netcdf file from 
+! Le Broq et al. (2010; doi:10.5194/essd-2-247-2010)
+pl/o/li=1/nol/dash totmb*0+0.17
+label 1200, 0.172,,,0.12 "Arthern et al. (2006)" 
+! Roussel et al. (2020) north of 82S (CloudSat)  
+pl/o/li=1/nol/dash totmb*0+0.186 ! 
+label 1200, 0.188,,,0.12 "Roussel et al. (2020)" 
+! van de Berg et al. (2006, doi:10.1029/2005JD006495) netcdf file from Le Broq et al. (2010)
+pl/o/li=1/nol/dash totmb*0+0.212 ! calculated from Searise data  
+label 1200, 0.214,,,0.12 "van de Berg et al. (2006)" 
+
+set view v21; ppl axlabp -1,-1
+! obs basal melt estimates Rignot et al. 2013 Science 1325+-235 Gt/y 
+! ice sheet area is 1.42e13 m^2
+! Depoorter et al. (2013) 1454+-174 Gt/y
+!go plot_swath poly/over/pal=green_light/nolab totmb*0-(1.325+0.235)/14.2, totmb*0-(1.325-0.235)/14.2
+! Adusumilli, 2020 https://doi.org/10.1038/s41561-020-0616-z 1100-1500 Gt/yr
+!go plot_swath poly/ylim=-0.5:0.5/pal=gray_light/nolab totmb*0-1.1/14.2, totmb*0-1.5/14.2
+
+pl/thick/set/nol/vlim=0.:0.15 omelt
+ppl xlab "Time (yr)"
+ppl ylab "Ocean Basal Melting  (m/yr)"
+ppl yfor (f5.2)
+ppl plot
+
+pl/thick/o/li=1/nol/dash totmb*0+1.1/14.2
+label 1200, 0.11,,,0.12 "Adusumilli et al. (2020)" 
+pl/o/li=1/nol/dash totmb*0+1.5/14.2
+
+set view v22; ppl axlabp -1,1
+!
+! obs calving Rignot et al, 2013 Science 1089+-139 Gt/y 
+!go plot_swath poly/over/pal=my_blue_light/nolab totmb*0-(1.089+0.139)/14.2, totmb*0-(1.089-0.139)/14.2
+! Depoorter et al. (2013) 1321+-144 Gt/y
+! Qi, 2021, https://doi.org/10.5194/essd-13-4583-2021 
+!go plot_swath poly/vlim=-0.5:0.1/pal=my_blue_light/nolab totmb*0-(0.789+0.036)/14.2, totmb*0-(0.789-0.036)/14.2
+pl/thick/nol/set/vlim=0:0.15 calv
+ppl xlab "Time (yr)"
+ppl ylab "Calving (m/yr)"
+ppl yfor (f5.2)
+ppl plot
+
+!pl/o/li=1/dash/nol totmb*0+(0.789-0.036)/14.2
+!pl/o/li=1/dash/nol totmb*0+(0.789+0.036)/14.2
+pl/o/li=1/dash/nol totmb*0+(0.789)/14.2
+label 1200, 0.06,,,0.12 "Qi et al. (2021)" 
+pl/o/li=1/dash/nol totmb*0+(1.321)/14.2
+label 1200, 0.1,,,0.12 "Depoorter et al. (2013)" 

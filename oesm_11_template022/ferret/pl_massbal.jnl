@@ -1,0 +1,25 @@
+use pim/ais/output/fort.92.nc
+!use ../uvic-pim_11_test4/pim/ais/output/fort.92.3510-4000.nc
+go calc_massbal
+pl/d=1/vlim=-0.5:0.6 totmb, sfcmb, basmb, ablmb
+! obs accumulation estimates Sikka, 1997 and Palerme, 2014
+go plot_swath poly/over/pal=pink/nolab totmb*0+0.17, totmb*0+0.25 
+! obs basal melt estimates Rignot et al. 2013 Science 1325+-235 Gt/y 
+! ice sheet area is 1.42e13 m^2
+!go plot_swath poly/over/pal=green_light/nolab totmb*0-(1.325+0.235)/14.2, totmb*0-(1.325-0.235)/14.2
+! Adusumilli, 2020 1100-1500 Gt/yr
+go plot_swath poly/over/pal=green_light/nolab totmb*0-1.1/14.2, totmb*0-1.5/14.2
+! obs calving Rignot et al, 2013 Science 1089+-139 Gt/y 
+!go plot_swath poly/over/pal=my_blue_light/nolab totmb*0-(1.089+0.139)/14.2, totmb*0-(1.089-0.139)/14.2
+! Qi, 2021
+go plot_swath poly/over/pal=my_blue_light/nolab totmb*0-(0.789+0.036)/14.2, totmb*0-(0.789-0.036)/14.2
+pl/d=1/o/li=1 totmb
+pl/d=1/o/li=2 sfcmb
+pl/d=1/o/li=3 basmb
+pl/d=1/o/li=4 ablmb
+pl/d=1/o/sym=1 dvdt
+!pl/o/d=2/dash/li=1 totmb
+!pl/o/d=2/dash/li=2 sfcmb
+!pl/o/d=2/dash/li=3 basmb
+!pl/o/d=2/dash/li=4 ablmb
+

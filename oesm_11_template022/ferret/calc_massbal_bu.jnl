@@ -1,0 +1,60 @@
+!use pim/ais/output/fort.92.3510-4000.nc
+let hmask = if h gt 0 then 1 else 0
+let vol0 = h*fedge*darea
+let area0 = fedge*darea*hmask
+let area1 = area0[x=@sum,y=@sum]
+let time2 = t[gt=time]*100+1000
+let time3 = 1000 + (t[gt=time]-100)*100
+!let time2 = 3500 + t[gt=time]*10
+!let time3 = 4500 + (t[gt=time]-100)*100
+let time4 = if t[gt=time] le 100 then time2 else time3
+!def axis/t/from_data/name=time10/units=years time2
+def axis/t/from_data/name=time10/units=years time4
+let/title="Ice Sheet Area"/units="m^2" area = area1[gt=time10@asn]
+let fac = 1/area
+let vol1 = vol0[x=@sum,y=@sum]
+let/title="Ice Volume"/units="10^6 km^3" vol = vol1[gt=time10@asn]*1e-15
+let/title="Ice Volume"/units="m^3" volm = vol1[gt=time10@asn]
+let spy = 3600*24*365
+let/title="Ice Volume Rate-of-Change"/units="m/yr" dvdt = volm[l=@ddc]*fac*spy
+let snow0 = budgsnow*fedge*darea*hmask
+let rain0 = budgrain*fedge*darea*hmask
+let perc0 = baseperc*fedge*darea*hmask
+let snow1 = snow0[x=@sum,y=@sum]*fac
+let rain1 = rain0[x=@sum,y=@sum]*fac
+let perc1 = perc0[x=@sum,y=@sum]*fac
+let/title="Surface Snow Accumulation"/units="m/yr" snow = snow1[gt=time10@asn]
+let/title="Surface Rain Accumulation"/units="m/yr" rain = rain1[gt=time10@asn]
+let/title="Percolation to Base"/units="m/yr" perc = perc1[gt=time10@asn]
+let/title="Surface Mass Balance"/units="m/yr" sfcmb = snow+rain-perc
+let bfrml0 = basefrml*darea*fedge*hmask
+let omelt0 = oceanmelt*darea*fedge*hmask
+let bfrml1 = bfrml0[x=@sum,y=@sum]*fac
+let omelt1 = omelt0[x=@sum,y=@sum]*fac
+let/title="Basal Freezing"/units="m/yr" bfrml = bfrml1[gt=time10@asn]
+let/title="Ocean Melt"/units="m/yr" omelt = omelt1[gt=time10@asn]
+let/title="Base Mass Balance"/units="m/yr" basmb = bfrml-omelt
+let fmelt0 = facemelt*fedge*darea*hmask
+let cmelt0 = cliffmelt*fedge*darea*hmask
+let calv0 = calvice*fedge*darea*hmask
+let fmelt1 = fmelt0[x=@sum,y=@sum]*fac
+let cmelt1 = cmelt0[x=@sum,y=@sum]*fac
+let calv1 = calv0[x=@sum,y=@sum]*fac
+let/title="Face Melt"/units="m/yr" fmelt = fmelt1[gt=time10@asn]
+let/title="Cliff Melt"/units="m/yr" cmelt = cmelt1[gt=time10@asn]
+let/title="Calving"/units="m/yr" calv = calv1[gt=time10@asn]
+let/title="Ablation Mass Balance"/units="m/yr" ablmb = (-1)*fmelt-cmelt-calv
+let/title="Total Mass Balance"/units="m/yr" totmb = sfcmb+basmb+ablmb
+let bneg0 = budgneg*fedge*darea*hmask
+let bneg = bneg0[x=@sum,y=@sum]
+let tsfc0 = if h gt 0 then (tsurf-273.15)*fedge*darea*hmask
+let tsfc1 = tsfc0[x=@sum,y=@sum]*fac
+let/title="Surface Temperature"/units="^oC" tsfc = tsfc1[gt=time10@asn]
+let runliq0 = omelt-bfrml+fmelt+perc
+let runliqav0 = runliqav*darea
+let runfrozav0 = runfrozav*darea
+let runliqav1 = runliqav0[x=@sum,y=@sum]/spy
+let runfrozav1 = runfrozav0[x=@sum,y=@sum]/spy
+let/title="Liquid Runoff"/units="m^3/s" runliqavi = runliqav1[gt=time10@asn]
+let/title="Frozen Runoff"/units="m^3/s" runfrozavi = runfrozav1[gt=time10@asn]
+

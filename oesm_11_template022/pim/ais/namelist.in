@@ -1,0 +1,5 @@
+$runparams
+  climfilein  = '../climfiles/17158.nc'
+  climfileout = 'pim.out.nc'
+  climfilectl = '/home/mortense/models/coupled_uvic-pim/uvic-pim_11_exp71/pim/climfiles/3501.nc'
+$END
