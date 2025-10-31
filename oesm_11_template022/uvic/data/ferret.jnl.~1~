@@ -1,0 +1,19 @@
+ ! NOAA/PMEL TMAP
+ ! PyFerret v7.5 (optimized)
+ ! Linux 4.15.0-1041-azure - 04/27/19
+ ! 14-Feb-23 14:17     
+
+set mode verify
+use L_ice.nc
+sh da
+sh gr
+sh gr l_icethk
+shade l_icethk[l=1000]
+shade l_icethk[l=10]
+shade l_icethk[l=20]
+shade l_icethk[l=2]
+shade l_icethk[l=22]
+shade l_icethk[l=1]
+plot l_icethk[x=@ave,y@ave]
+plot l_icethk[x=@ave,y=@ave]
+exit

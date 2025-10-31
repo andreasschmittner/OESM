@@ -1,0 +1,5 @@
+use O_silica.nc
+let msk = missing(o_silica/o_silica,1)
+let o_sil = fill_xy(o_silica,msk,10)
+save/file=O_sil.nc o_sil
+
